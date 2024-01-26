@@ -1,14 +1,23 @@
 <script lang="ts">
+    import { enhance } from "$app/forms";
+
     export let form;
 
     function hasError(field: string) {
         return form && form[field];
     }
+
+    let loading = false;
 </script>
 
 <h1>Register</h1>
 
-<form method="post">
+<form
+    method="post"
+    use:enhance={() => {
+        loading = true;
+    }}
+>
     <div class="mb-3">
         <label for="username" class="form-label">Username</label>
         <input
@@ -51,5 +60,7 @@
     <div class="mb-3">
         Already have an account? <a href="/login">Login</a>
     </div>
-    <button type="submit" class="btn btn-primary">Register</button>
+    <button type="submit" class="btn btn-primary" disabled={loading}
+        >Register</button
+    >
 </form>
