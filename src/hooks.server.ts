@@ -32,6 +32,14 @@ export const handle: Handle = async ({ event, resolve }) => {
         }
     }
 
+    // Check if the user isn't logged in every request to '/login'
+    if (event.url.pathname.startsWith('/login') || event.url.pathname.startsWith('/register')) {
+        if (event.locals.user) {
+            // Redirect to the home page if the user is logged in
+            throw redirect(303, '/');
+        }
+    }
+
     // Resolve the request
     const response = await resolve(event);
 

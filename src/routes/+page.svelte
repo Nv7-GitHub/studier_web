@@ -2,4 +2,7 @@
 </script>
 
 <h1>Studier</h1>
-<button type="button" class="btn btn-success">Button</button>
+<p class="lead">
+    Studier allows you to take and study notes in an efficient, successful
+    manner. Ace your tests with Studier!
+</p>
