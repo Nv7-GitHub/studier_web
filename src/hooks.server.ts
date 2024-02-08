@@ -1,7 +1,6 @@
+import { POCKETBASE_URL } from '$lib';
 import { redirect, type Handle } from '@sveltejs/kit';
 import PocketBase from 'pocketbase';
-
-export const POCKETBASE_URL = "https://studier.pockethost.io/";
 
 export const handle: Handle = async ({ event, resolve }) => {
     // Create a new PocketBase instance
@@ -47,7 +46,7 @@ export const handle: Handle = async ({ event, resolve }) => {
     const isProd = process.env.NODE_ENV === 'production' ? true : false;
     response.headers.set(
         'set-cookie',
-        event.locals.pb.authStore.exportToCookie({ secure: isProd, sameSite: 'Lax' })
+        event.locals.pb.authStore.exportToCookie({ secure: isProd, sameSite: 'Lax', httpOnly: false })
     );
 
     return response;

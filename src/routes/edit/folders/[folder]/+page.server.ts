@@ -26,12 +26,21 @@ export const actions = {
     newset: async ({ locals, params, request, route }) => {
         const data = await request.formData();
         const name = data.get("name") as string;
-        await locals.pb?.collection("sets").create({
+        const set = await locals.pb?.collection("sets").create({
             title: name,
             folder: params.folder,
             author: locals.user?.id,
             questions: [],
         })
+        const q = await locals.pb?.collection("questions").create({
+            set: set?.id,
+            question: "",
+            kind: "single",
+            answer: { "value": "" },
+        });
+        await locals.pb?.collection("sets").update(set!.id, {
+            questions: [q?.id],
+        });
         return { success: true };
     },
     delfolder: async ({ locals, request }) => {
