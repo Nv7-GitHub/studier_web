@@ -15,7 +15,7 @@ export async function load({ locals, params }) {
 export const actions = {
     newfolder: async ({ locals, params, request, route }) => {
         const data = await request.formData();
-        const name = data.get("foldername") as string;
+        const name = data.get("name") as string;
         await locals.pb?.collection("folders").create({
             name,
             parent: params.folder,
@@ -23,10 +23,27 @@ export const actions = {
         })
         return { success: true };
     },
+    newset: async ({ locals, params, request, route }) => {
+        const data = await request.formData();
+        const name = data.get("name") as string;
+        await locals.pb?.collection("sets").create({
+            title: name,
+            folder: params.folder,
+            author: locals.user?.id,
+            questions: [],
+        })
+        return { success: true };
+    },
     delfolder: async ({ locals, request }) => {
         const data = await request.formData();
         const id = data.get('id') as string;
         await locals.pb?.collection("folders").delete(id);
+        return { success: true };
+    },
+    delset: async ({ locals, request }) => {
+        const data = await request.formData();
+        const id = data.get('id') as string;
+        await locals.pb?.collection("sets").delete(id);
         return { success: true };
     }
 }

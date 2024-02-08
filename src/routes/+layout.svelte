@@ -37,7 +37,7 @@
                             <li>
                                 <a
                                     class="dropdown-item"
-                                    href="/edit/sets/{data.user.home}"
+                                    href="/edit/folders/{data.user.home}"
                                     >My Sets</a
                                 >
                             </li>
