@@ -4,6 +4,10 @@
     export let pb: PocketBase;
     export let questions: RecordModel[];
     export let ind: number;
+    export let newquestion: () => Promise<void>;
+    export let rmquestion: (ind: number) => Promise<void>;
+    export let focus: HTMLInputElement =
+        undefined as unknown as HTMLInputElement;
 
     export let inputs: HTMLInputElement[] = [];
 
@@ -26,6 +30,11 @@
             edit();
             await tick();
             inputs[1].focus();
+        }
+
+        if (e.key == "Tab") {
+            e.preventDefault();
+            newquestion();
         }
     }
 
@@ -58,6 +67,19 @@
                 inputs[0].focus();
             }
         }
+
+        if (e.key == "Tab" && parseInt(t.id) == inputs.length - 1) {
+            e.preventDefault();
+            newquestion();
+        }
+    }
+
+    async function handleTitleInput(e: KeyboardEvent) {
+        let t = e.target as HTMLInputElement;
+        if (e.key == "Backspace" && t.value == "") {
+            e.preventDefault();
+            rmquestion(ind);
+        }
     }
 </script>
 
@@ -68,6 +90,8 @@
                 class="form-control"
                 bind:value={questions[ind].question}
                 on:change={edit}
+                bind:this={focus}
+                on:keydown={handleTitleInput}
                 placeholder="Question"
             />
         </div>
