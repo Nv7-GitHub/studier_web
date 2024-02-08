@@ -35,7 +35,9 @@
                         </button>
                         <ul class="dropdown-menu dropdown-menu-end">
                             <li>
-                                <a class="dropdown-item" href="/edit/sets"
+                                <a
+                                    class="dropdown-item"
+                                    href="/edit/sets/{data.user.home}"
                                     >My Sets</a
                                 >
                             </li>

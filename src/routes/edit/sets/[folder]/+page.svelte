@@ -3,18 +3,43 @@
 
     export let data;
     let loading = new Array(data.subfolders.length).fill(false);
+
+    let createFolderLoading = false;
 </script>
+
+{#if data.folder?.parent}
+    <div class="mb-3">
+        <a href="/edit/sets/{data.folder?.parent}">
+            <i class="bi bi-folder-symlink-fill"></i> Back to {data.folder
+                ?.expand?.parent.name}</a
+        >
+    </div>
+{/if}
 
 <h1>{data.folder?.name}</h1>
 
-<form action="?/newfolder" method="POST" class="input-group mb-3">
+<form
+    action="?/newfolder"
+    method="POST"
+    class="input-group mb-3"
+    use:enhance={() => {
+        createFolderLoading = true;
+
+        return async ({ update }) => {
+            createFolderLoading = false;
+            update();
+        };
+    }}
+>
     <input
         type="text"
         class="form-control"
         placeholder="New folder name"
         name="foldername"
     />
-    <button class="btn btn-outline-primary" type="submit">Create Folder</button>
+    <button class="btn btn-outline-primary" disabled={createFolderLoading}
+        >Create Folder</button
+    >
 </form>
 
 <div class="list-group">
@@ -39,6 +64,8 @@
             >
                 <button
                     class="btn btn-danger btn float-end"
+                    name="id"
+                    value={f.id}
                     disabled={loading[i]}><i class="bi bi-trash"></i></button
                 >
             </form>

@@ -1,6 +1,8 @@
 export async function load({ locals, params }) {
     return {
-        folder: await locals.pb?.collection("folders").getOne(params.folder),
+        folder: await locals.pb?.collection("folders").getOne(params.folder, {
+            expand: "parent",
+        }),
         subfolders: await locals.pb?.collection("folders").getFullList({
             filter: `parent.id="${params.folder}" && user.id="${locals.user?.id}"`,
         })!,
@@ -11,12 +13,8 @@ export async function load({ locals, params }) {
 };
 
 export const actions = {
-    newfolder: async ({ locals, params, request }) => {
-        console.log("NEW FOLDER");
-        console.log(request)
+    newfolder: async ({ locals, params, request, route }) => {
         const data = await request.formData();
-        console.log("FORM DATA:");
-        console.log(data);
         const name = data.get("foldername") as string;
         await locals.pb?.collection("folders").create({
             name,
@@ -25,9 +23,10 @@ export const actions = {
         })
         return { success: true };
     },
-    delfolder: async ({ locals, params }) => {
-        //await locals.pb?.collection("folders").delete(params.folder); // This deletes the parent folder
-        console.log("DEL FOLDER")
+    delfolder: async ({ locals, request }) => {
+        const data = await request.formData();
+        const id = data.get('id') as string;
+        await locals.pb?.collection("folders").delete(id);
         return { success: true };
     }
 }

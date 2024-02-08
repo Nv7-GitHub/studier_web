@@ -22,11 +22,14 @@ export const actions = {
         // Login
         try {
             const usr = await locals.pb?.collection("users").authWithPassword(email, password);
-            await locals.pb?.collection("folders").create({
+            const home = await locals.pb?.collection("folders").create({
                 "parent": null,
                 "name": "Home",
                 "user": usr?.record.id,
             })
+            await locals.pb?.collection("users").update(usr?.record.id!, {
+                "home": home?.record.id,
+            });
         } catch (err) {
             console.log('Login error', err);
         }
