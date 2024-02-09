@@ -5,9 +5,11 @@ export async function load({ locals, params }) {
         }),
         subfolders: await locals.pb?.collection("folders").getFullList({
             filter: `parent.id="${params.folder}" && user.id="${locals.user?.id}"`,
+            sort: "name"
         })!,
         sets: await locals.pb?.collection("sets").getFullList({
             filter: `folder.id="${params.folder}" && author.id="${locals.user?.id}"`,
+            sort: "title"
         })!,
     }
 };
