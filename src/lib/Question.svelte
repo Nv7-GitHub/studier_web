@@ -1,5 +1,6 @@
 <script lang="ts">
     import PocketBase, { type RecordModel } from "pocketbase";
+    import { browser } from "$app/environment";
     import { tick } from "svelte";
     export let pb: PocketBase;
     export let questions: RecordModel[];
@@ -24,6 +25,21 @@
                 expand: "include",
             },
         );
+    }
+
+    let fileInput: HTMLInputElement;
+    async function editImage() {
+        const formData = new FormData();
+        if (fileInput.files && fileInput.files.length == 1) {
+            formData.append("image", fileInput.files[0]);
+        }
+        fileInput.disabled = true;
+        const q = await pb
+            .collection("questions")
+            .update(questions[ind].id, formData);
+        fileInput.disabled = false;
+        fileInput.value = "";
+        questions[ind].image = q.image;
     }
 
     async function handleValueInput(e: KeyboardEvent) {
@@ -149,6 +165,22 @@
 </script>
 
 <div class="card mt-3">
+    {#if questions[ind].image && browser}
+        <img
+            src={pb.getFileUrl(questions[ind], questions[ind].image)}
+            class="card-img-top"
+            alt="Question"
+        />
+    {/if}
+    <div class="card-header">
+        <input
+            type="file"
+            class="form-control"
+            bind:this={fileInput}
+            on:change={editImage}
+            accept="image/png, image/jpeg"
+        />
+    </div>
     <div class="card-body">
         <div class="card-title input-group">
             <input
