@@ -12,12 +12,18 @@
     export let inputs: HTMLInputElement[] = [];
 
     async function edit() {
-        await pb.collection("questions").update(questions[ind].id, {
-            question: questions[ind].question,
-            kind: questions[ind].kind,
-            answer: questions[ind].answer,
-            include: questions[ind].include,
-        });
+        questions[ind] = await pb.collection("questions").update(
+            questions[ind].id,
+            {
+                question: questions[ind].question,
+                kind: questions[ind].kind,
+                answer: questions[ind].answer,
+                include: questions[ind].include,
+            },
+            {
+                expand: "include",
+            },
+        );
     }
 
     async function handleValueInput(e: KeyboardEvent) {
@@ -43,6 +49,7 @@
         if (e.key == "Enter") {
             questions[ind].kind = "multiple";
             questions[ind].answer.values.push("");
+            questions[ind].answer = questions[ind].answer; // Make svelte happy
             inputs.push(undefined as unknown as HTMLInputElement);
             edit();
             await tick();
@@ -54,6 +61,7 @@
             if (questions[ind].answer.values.length > 2) {
                 let i = parseInt(t.id);
                 questions[ind].answer.values.splice(i, 1);
+                questions[ind].answer = questions[ind].answer; // Make svelte happy
                 inputs.splice(i, 1);
                 edit();
                 await tick();
@@ -81,6 +89,63 @@
             rmquestion(ind);
         }
     }
+
+    function blanksCheck(e: KeyboardEvent) {
+        let t = e.target as HTMLInputElement;
+
+        if (t.value == "include") {
+            questions[ind].kind = "include";
+            questions[ind].answer = {};
+            edit();
+        } else if (questions[ind].kind == "include") {
+            questions[ind].kind = "single";
+            questions[ind].answer = { value: "" };
+            edit();
+        }
+
+        const blanksRe = /`(.+?)`/g;
+        let matches = [...t.value.matchAll(blanksRe)];
+        if (matches.length > 0) {
+            if (questions[ind].kind != "blanks") {
+                questions[ind].kind = "blanks";
+                questions[ind].answer = { blanks: [] };
+            }
+            while (questions[ind].answer.blanks.length < matches.length) {
+                questions[ind].answer.blanks.push({ key: "", value: "" });
+            }
+            while (questions[ind].answer.blanks.length > matches.length) {
+                questions[ind].answer.blanks.pop();
+            }
+
+            for (let [i, match] of matches.entries()) {
+                questions[ind].answer.blanks[i].key = match[1];
+            }
+            edit();
+        } else if (questions[ind].kind == "blanks") {
+            questions[ind].kind = "single";
+            questions[ind].answer = { value: "" };
+            edit();
+        }
+    }
+
+    async function handleBlanksInput(e: KeyboardEvent) {
+        let t = e.target as HTMLInputElement;
+
+        if (
+            e.key == "Tab" &&
+            parseInt(t.id) == questions[ind].answer.blanks.length - 1
+        ) {
+            e.preventDefault();
+            newquestion();
+        }
+    }
+
+    async function handleIncludeInput(e: KeyboardEvent) {
+        if (e.key == "Tab") {
+            e.preventDefault();
+            newquestion();
+        }
+    }
 </script>
 
 <div class="card mt-3">
@@ -92,6 +157,7 @@
                 on:change={edit}
                 bind:this={focus}
                 on:keydown={handleTitleInput}
+                on:keyup={blanksCheck}
                 placeholder="Question"
             />
         </div>
@@ -119,9 +185,45 @@
                 />
             {/each}
         {:else if questions[ind].kind == "blanks"}
-            TODO
+            {#each questions[ind].answer.blanks as b, i}
+                <div class="input-group">
+                    <span class="input-group-text">{b.key}</span>
+                    <input
+                        class="form-control"
+                        bind:value={questions[ind].answer.blanks[i].value}
+                        on:change={edit}
+                        id={i.toString()}
+                        on:keydown={handleBlanksInput}
+                        placeholder="Answer"
+                    />
+                </div>
+            {/each}
         {:else if questions[ind].kind == "include"}
-            TODO
+            <input
+                class="form-control"
+                placeholder="Included set ID"
+                on:change={edit}
+                on:keydown={handleIncludeInput}
+                bind:value={questions[ind].include}
+                bind:this={inputs[0]}
+            />
+            {#if questions[ind].expand?.include}
+                <div class="mt-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <h6 class="card-title mb-2">
+                                {questions[ind].expand?.include.title}
+                            </h6>
+                            <p class="card-text">
+                                {questions[ind].expand?.include.questions
+                                    .length} questions
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            {:else}
+                TODO: Instructions on how to copy the ID
+            {/if}
         {/if}
     </div>
 </div>

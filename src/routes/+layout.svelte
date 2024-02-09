@@ -59,6 +59,6 @@
     </div>
 </nav>
 
-<div class="container mt-3">
+<div class="container mt-3 mb-4">
     <slot />
 </div>
