@@ -13,6 +13,70 @@
         pb.authStore.loadFromCookie(document.cookie);
     }
 
+    /*import upload from "./upload.json";
+    if (browser) {
+        (document as any)["u"] = uploadSet;
+    }
+    async function uploadSet() {
+        const name = "Chapter 21";
+        const folder = "4lnxyx0qfxt1xwt";
+        let qs: string[] = [];
+        let set = await pb.collection("sets").create({
+            title: name,
+            folder: folder,
+            author: data.user?.id,
+        });
+        for (let q of upload) {
+            let text = "";
+            for (let t of q.Text) {
+                if (t.Kind == 0) {
+                    text += t.Value;
+                } else {
+                    text += "`" + t.Value + "`";
+                }
+            }
+
+            let kind = "single";
+            let answer = {};
+            if (q.Answer.Answers) {
+                if (q.Answer.Order) {
+                    kind = "blanks";
+                    let answers = [];
+                    for (let a of q.Answer.Order) {
+                        answers.push({
+                            key: a,
+                            value: (q.Answer.Answers as any)[a],
+                        });
+                    }
+                    answer = { blanks: answers };
+                } else {
+                    kind = "multiple";
+                    answer = { values: q.Answer.Answers };
+                }
+            } else {
+                answer = { value: q.Answer.Answer };
+            }
+
+            while (true) {
+                try {
+                    let val = await pb.collection("questions").create({
+                        set: set.id,
+                        question: text,
+                        kind: kind,
+                        answer: answer,
+                    });
+                    console.log(text);
+                    qs.push(val.id);
+                    break;
+                } catch (e) {
+                    console.log("Waiting...");
+                    await new Promise((r) => setTimeout(r, 10000));
+                }
+            }
+        }
+        await pb.collection("sets").update(set.id, { questions: qs });
+    }*/
+
     let qs = new Array(data.set?.expand?.questions.length);
     async function newquestion() {
         const q = await pb.collection("questions").create({
