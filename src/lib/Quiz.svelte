@@ -1,6 +1,6 @@
 <script lang="ts">
-    import PocketBase, { type RecordModel } from "pocketbase";
-    import { onMount, tick } from "svelte";
+    import { type RecordModel } from "pocketbase";
+    import { onMount } from "svelte";
 
     export let question: RecordModel;
     let oldid = "";
@@ -15,6 +15,7 @@
     let right = false;
     let wrongval: string;
     let answered: string[] = [];
+    let blanksanswered: Record<string, string> = {};
     $: {
         if (oldid != question.id) {
             oldid = question.id;
@@ -22,8 +23,9 @@
             wrong = false;
             right = false;
             answered = [];
+            blanksanswered = {};
             if (inp) {
-                inp.value = "";
+                inpval = "";
             }
         }
     }
@@ -50,10 +52,34 @@
 
     function submit() {
         if (wrong) {
+            if (question.kind == "multiple") {
+                next(false);
+                return;
+            }
+
             if (inpval.toLowerCase().startsWith("y")) {
-                wrong = false;
-                right = true;
-                next(true);
+                if (question.kind == "single") {
+                    wrong = false;
+                    right = true;
+                    next(true);
+                } else {
+                    // Blanks
+                    let ans =
+                        question.answer.blanks[
+                            Object.keys(blanksanswered).length
+                        ];
+                    blanksanswered[ans.key] = inpval;
+                    inpval = "";
+                    if (
+                        Object.keys(blanksanswered).length ==
+                        question.answer.blanks.length
+                    ) {
+                        right = true;
+                        next(true);
+                        return;
+                    }
+                    wrong = false;
+                }
                 return;
             } else {
                 next(false);
@@ -70,7 +96,7 @@
             } else {
                 wrong = true;
                 wrongval = inpval ?? "";
-                inp.value = "";
+                inpval = "";
                 return;
             }
         }
@@ -95,7 +121,7 @@
             }
             if (correct) {
                 answered = [...answered, inpval];
-                inp.value = "";
+                inpval = "";
 
                 if (answered.length == question.answer.values.length) {
                     right = true;
@@ -110,6 +136,28 @@
                 return;
             }
         }
+
+        if (question.kind == "blanks") {
+            let ans =
+                question.answer.blanks[Object.keys(blanksanswered).length];
+            if (compare(inpval, ans.value)) {
+                blanksanswered[ans.key] = inpval;
+                inpval = "";
+                if (
+                    Object.keys(blanksanswered).length ==
+                    question.answer.blanks.length
+                ) {
+                    right = true;
+                    next(true);
+                    return;
+                }
+                return;
+            } else {
+                wrong = true;
+                wrongval = inpval ?? "";
+                return;
+            }
+        }
     }
 </script>
 
@@ -117,14 +165,24 @@
     <h2 class="lead">
         {#each parts as p}
             {#if p[0] == "`"}
-                <code>{p.slice(1, -1)}</code>
+                {#if blanksanswered[p]}
+                    <code>{blanksanswered[p]}</code>
+                {:else}
+                    <code>{p.slice(1, -1)}</code>
+                {/if}
             {:else}
                 {p}
             {/if}
         {/each}
     </h2>
 
-    {#if !wrong || question.kind == "single" || question.kind == "blanks"}
+    <div class="input-group">
+        {#if question.kind == "blanks" && Object.keys(blanksanswered).length < question.answer.blanks.length}
+            <span class="input-group-text"
+                >{question.answer.blanks[Object.keys(blanksanswered).length]
+                    .key}</span
+            >
+        {/if}
         <input
             type="text"
             class="form-control"
@@ -136,9 +194,13 @@
             on:keydown={onkeydown}
         />
         {#if wrong}
-            <div class="invalid-feedback text-start">Typo? Y/N</div>
+            <div class="invalid-feedback text-start">
+                {question.kind != "multiple"
+                    ? "Typo? Y/N"
+                    : "Press ENTER to continue"}
+            </div>
         {/if}
-    {/if}
+    </div>
 
     {#if question.kind == "multiple" && !wrong}
         <h3 class="mt-3">Your Answers</h3>
@@ -166,6 +228,15 @@
                     <li class="list-group-item">{a}</li>
                 {/each}
             </ul>
+        {:else if question.kind == "blanks"}
+            <h3>Your Answer</h3>
+            {wrongval}
+
+            <h3>Correct Answer</h3>
+            {#if Object.keys(blanksanswered).length < question.answer.blanks.length}
+                {question.answer.blanks[Object.keys(blanksanswered).length]
+                    .value}
+            {/if}
         {/if}
     {/if}
 </div>

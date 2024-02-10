@@ -50,6 +50,16 @@
                     progress += questionValue(q);
                 }
             }
+        } else {
+            let p = JSON.parse(
+                window.localStorage.getItem("progress-" + data.set?.id)!,
+            );
+            for (let v of p) {
+                let q = questions.find((q) => q.id == v);
+                if (q) {
+                    progress += questionValue(q);
+                }
+            }
         }
 
         loading = false;
@@ -87,7 +97,6 @@
                 await pb.collection("progress").update(data.progress!.id, {
                     finished: data.progress.finished,
                 });
-                console.log(data.progress.finished);
             } else {
                 let p = JSON.parse(
                     window.localStorage.getItem("progress-" + data.set?.id)!,
@@ -104,8 +113,14 @@
 
         // Check if done
         if (progress >= totalValue) {
+            if (data.progress) {
+                await pb.collection("progress").delete(data.progress.id);
+                data.progress.finished = [];
+            } else {
+                window.localStorage.removeItem("progress-" + data.set?.id);
+            }
             alert("Done!");
-            goto(`/folders/${data.set?.folder.id}`);
+            await goto(`/folders/${data.set?.folder}`);
             return;
         }
 
