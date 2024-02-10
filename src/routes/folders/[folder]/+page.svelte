@@ -73,29 +73,29 @@
                 ><i class="bi bi-folder"></i>
                 {f.name}</a
             >
-            <div class="btn-group float-end">
-                <button
-                    class="btn btn-success"
-                    on:click={(e) => {
-                        copy(e, f.id);
-                    }}
-                >
-                    <i class="bi bi-clipboard"></i>
-                </button>
-                {#if owner}
-                    <form
-                        method="POST"
-                        action="?/delfolder"
-                        use:enhance={() => {
-                            loading[i] = true;
+            <form
+                method="POST"
+                action="?/delfolder"
+                use:enhance={() => {
+                    loading[i] = true;
 
-                            return async ({ update }) => {
-                                loading[i] = false;
-                                update();
-                            };
+                    return async ({ update }) => {
+                        loading[i] = false;
+                        update();
+                    };
+                }}
+                style="display: inline;"
+            >
+                <div class="btn-group float-end">
+                    <button
+                        class="btn btn-success"
+                        on:click|preventDefault={(e) => {
+                            copy(e, f.id);
                         }}
-                        style="display: inline;"
                     >
+                        <i class="bi bi-clipboard"></i>
+                    </button>
+                    {#if owner}
                         <button
                             class="btn btn-danger"
                             name="id"
@@ -103,9 +103,9 @@
                             disabled={loading[i]}
                             ><i class="bi bi-trash"></i></button
                         >
-                    </form>
-                {/if}
-            </div>
+                    {/if}
+                </div>
+            </form>
         </li>
     {/each}
 </div>
@@ -119,32 +119,32 @@
                 ><i class="bi bi-file-earmark"></i>
                 {f.title}</a
             >
-            <div class="btn-group float-end">
-                <a class="btn btn-primary" href={"/study/" + f.id}>
-                    <i class="bi bi-play-fill"></i>
-                </a>
-                <button
-                    class="btn btn-success"
-                    on:click={(e) => {
-                        copy(e, f.id);
-                    }}
-                >
-                    <i class="bi bi-clipboard"></i>
-                </button>
-                {#if owner}
-                    <form
-                        method="POST"
-                        action="?/delset"
-                        use:enhance={() => {
-                            setLoading[i] = true;
+            <form
+                method="POST"
+                action="?/delset"
+                use:enhance={() => {
+                    setLoading[i] = true;
 
-                            return async ({ update }) => {
-                                setLoading[i] = false;
-                                update();
-                            };
+                    return async ({ update }) => {
+                        setLoading[i] = false;
+                        update();
+                    };
+                }}
+                style="display: inline;"
+            >
+                <div class="btn-group float-end">
+                    <a class="btn btn-primary" href={"/study/" + f.id}>
+                        <i class="bi bi-play-fill"></i>
+                    </a>
+                    <button
+                        class="btn btn-success"
+                        on:click|preventDefault={(e) => {
+                            copy(e, f.id);
                         }}
-                        style="display: inline;"
                     >
+                        <i class="bi bi-clipboard"></i>
+                    </button>
+                    {#if owner}
                         <button
                             class="btn btn-danger"
                             name="id"
@@ -153,9 +153,9 @@
                         >
                             <i class="bi bi-trash"></i>
                         </button>
-                    </form>
-                {/if}
-            </div>
+                    {/if}
+                </div>
+            </form>
         </li>
     {/each}
 </div>
