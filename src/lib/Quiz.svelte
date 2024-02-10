@@ -68,7 +68,7 @@
                         question.answer.blanks[
                             Object.keys(blanksanswered).length
                         ];
-                    blanksanswered[ans.key] = inpval;
+                    blanksanswered[ans.key] = ans.value;
                     inpval = "";
                     if (
                         Object.keys(blanksanswered).length ==
@@ -89,7 +89,6 @@
 
         if (question.kind == "single") {
             if (compare(inpval, question.answer.value)) {
-                console.log(inpval, question.answer.value);
                 right = true;
                 next(true);
                 return;
@@ -155,6 +154,7 @@
             } else {
                 wrong = true;
                 wrongval = inpval ?? "";
+                inpval = "";
                 return;
             }
         }
@@ -165,8 +165,8 @@
     <h2 class="lead">
         {#each parts as p}
             {#if p[0] == "`"}
-                {#if blanksanswered[p]}
-                    <code>{blanksanswered[p]}</code>
+                {#if blanksanswered[p.slice(1, -1)]}
+                    <code>{blanksanswered[p.slice(1, -1)]}</code>
                 {:else}
                     <code>{p.slice(1, -1)}</code>
                 {/if}
