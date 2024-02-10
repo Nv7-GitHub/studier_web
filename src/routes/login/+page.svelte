@@ -6,6 +6,10 @@
     let loading = false;
 </script>
 
+<svelte:head>
+    <title>Login - Studier</title>
+</svelte:head>
+
 <h1>Login</h1>
 
 <form

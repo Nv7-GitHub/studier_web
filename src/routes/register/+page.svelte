@@ -10,6 +10,10 @@
     let loading = false;
 </script>
 
+<svelte:head>
+    <title>Register - Studier</title>
+</svelte:head>
+
 <h1>Register</h1>
 
 <form

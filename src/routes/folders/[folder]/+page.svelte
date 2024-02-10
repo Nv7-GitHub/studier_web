@@ -1,5 +1,4 @@
 <script lang="ts">
-    import { browser } from "$app/environment";
     import { enhance } from "$app/forms";
 
     export let data;
