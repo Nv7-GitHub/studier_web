@@ -115,9 +115,15 @@
 
         qs[ind - 1 < 0 ? 0 : ind - 1].focus();
     }
+
+    let owner = data.set?.author == data.user?.id;
 </script>
 
-<a href="/edit/folders/{data.set?.folder}">
+<svelte:head>
+    <title>{data.set?.title} - Studier</title>
+</svelte:head>
+
+<a href="/folders/{data.set?.folder}">
     <i class="bi bi-folder-symlink-fill"></i> Back to {data.set?.expand?.folder
         .name}</a
 >
@@ -131,6 +137,7 @@
         ind={i}
         {newquestion}
         {rmquestion}
+        {owner}
         bind:focus={qs[i]}
     />
 {/each}

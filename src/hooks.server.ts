@@ -23,14 +23,6 @@ export const handle: Handle = async ({ event, resolve }) => {
         event.locals.pb.authStore.clear();
     }
 
-    // Check if the user is logged on every request to '/edit/...'
-    if (event.url.pathname.startsWith('/edit')) {
-        if (!event.locals.user) {
-            // Redirect to the login page if the user is not logged in
-            throw redirect(303, '/');
-        }
-    }
-
     // Check if the user isn't logged in every request to '/login'
     if (event.url.pathname.startsWith('/login') || event.url.pathname.startsWith('/register')) {
         if (event.locals.user) {

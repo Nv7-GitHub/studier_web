@@ -1,14 +1,14 @@
 export async function load({ locals, params }) {
     return {
         folder: await locals.pb?.collection("folders").getOne(params.folder, {
-            expand: "parent",
+            expand: "parent,user",
         }),
         subfolders: await locals.pb?.collection("folders").getFullList({
-            filter: `parent.id="${params.folder}" && user.id="${locals.user?.id}"`,
+            filter: `parent.id="${params.folder}"`,
             sort: "name"
         })!,
         sets: await locals.pb?.collection("sets").getFullList({
-            filter: `folder.id="${params.folder}" && author.id="${locals.user?.id}"`,
+            filter: `folder.id="${params.folder}"`,
             sort: "title"
         })!,
     }

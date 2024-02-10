@@ -11,6 +11,7 @@
         undefined as unknown as HTMLInputElement;
 
     export let inputs: HTMLInputElement[] = [];
+    export let owner: boolean;
 
     async function edit() {
         questions[ind] = await pb.collection("questions").update(
@@ -22,7 +23,7 @@
                 include: questions[ind].include,
             },
             {
-                expand: "include",
+                expand: "include,include.author",
             },
         );
     }
@@ -172,15 +173,17 @@
             alt="Question"
         />
     {/if}
-    <div class="card-header">
-        <input
-            type="file"
-            class="form-control"
-            bind:this={fileInput}
-            on:change={editImage}
-            accept="image/png, image/jpeg"
-        />
-    </div>
+    {#if owner}
+        <div class="card-header">
+            <input
+                type="file"
+                class="form-control"
+                bind:this={fileInput}
+                on:change={editImage}
+                accept="image/png, image/jpeg"
+            />
+        </div>
+    {/if}
     <div class="card-body">
         <div class="card-title input-group">
             <input
@@ -191,6 +194,7 @@
                 on:keydown={handleTitleInput}
                 on:keyup={blanksCheck}
                 placeholder="Question"
+                disabled={!owner}
             />
         </div>
         <h6 class="card-subtitle mb-2 text-body-secondary mt-3">Answer</h6>
@@ -203,6 +207,7 @@
                 on:keydown={handleValueInput}
                 bind:value={questions[ind].answer.value}
                 bind:this={inputs[0]}
+                disabled={!owner}
             />
         {:else if questions[ind].kind == "multiple"}
             {#each questions[ind].answer.values as _, i}
@@ -214,6 +219,7 @@
                     on:keydown={handleMultipleInput}
                     bind:value={questions[ind].answer.values[i]}
                     bind:this={inputs[i]}
+                    disabled={!owner}
                 />
             {/each}
         {:else if questions[ind].kind == "blanks"}
@@ -227,6 +233,7 @@
                         id={i.toString()}
                         on:keydown={handleBlanksInput}
                         placeholder="Answer"
+                        disabled={!owner}
                     />
                 </div>
             {/each}
@@ -238,6 +245,7 @@
                 on:keydown={handleIncludeInput}
                 bind:value={questions[ind].include}
                 bind:this={inputs[0]}
+                disabled={!owner}
             />
             {#if questions[ind].expand?.include}
                 <div class="mt-3">
@@ -245,6 +253,10 @@
                         <div class="card-body">
                             <h6 class="card-title mb-2">
                                 {questions[ind].expand?.include.title}
+                            </h6>
+                            <h6 class="card-subtitle mb-2 text-body-secondary">
+                                By {questions[ind].expand?.include.expand.author
+                                    .username}
                             </h6>
                             <p class="card-text">
                                 {questions[ind].expand?.include.questions
