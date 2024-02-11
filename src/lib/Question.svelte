@@ -14,18 +14,22 @@
     export let owner: boolean;
 
     async function edit() {
-        questions[ind] = await pb.collection("questions").update(
-            questions[ind].id,
-            {
-                question: questions[ind].question,
-                kind: questions[ind].kind,
-                answer: questions[ind].answer,
-                include: questions[ind].include,
-            },
-            {
-                expand: "include,include.author",
-            },
-        );
+        try {
+            questions[ind] = await pb.collection("questions").update(
+                questions[ind].id,
+                {
+                    question: questions[ind].question,
+                    kind: questions[ind].kind,
+                    answer: questions[ind].answer,
+                    include: questions[ind].include,
+                },
+                {
+                    expand: "include,include.author",
+                },
+            );
+        } catch (e) {
+            console.log("autocancel");
+        }
     }
 
     let fileInput: HTMLInputElement;
