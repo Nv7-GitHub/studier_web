@@ -1,8 +1,10 @@
 <script lang="ts">
-    import { type RecordModel } from "pocketbase";
+    import { browser } from "$app/environment";
+    import PocketBase, { type RecordModel } from "pocketbase";
     import { onMount } from "svelte";
 
     export let question: RecordModel;
+    export let pb: PocketBase;
     let oldid = "";
     export let next: (correct: boolean) => Promise<void>;
     async function transitionNext(correct: boolean) {
@@ -171,6 +173,13 @@
     class="text-center"
     style="opacity: {opacity}%; transition-duration: 0.2s;"
 >
+    {#if question.image && browser}
+        <img
+            src={pb.getFileUrl(question, question.image)}
+            alt="Question"
+            class="img-fluid"
+        />
+    {/if}
     <h2 class="lead">
         {#each parts as p}
             {#if p[0] == "`"}

@@ -162,7 +162,7 @@
         </div>
     </div>
 
-    <Quiz question={questions[ind]} {next} />
+    <Quiz question={questions[ind]} {next} {pb} />
 {/if}
 
 <style>
