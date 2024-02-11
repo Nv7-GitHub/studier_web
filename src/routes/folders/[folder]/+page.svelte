@@ -23,6 +23,13 @@
             (btn.firstChild as HTMLElement).classList.add("bi-clipboard");
         }, 1000);
     }
+
+    function confirm(e: Event) {
+        if (window.confirm("Are you sure you want to delete this?")) {
+            return;
+        }
+        e.preventDefault();
+    }
 </script>
 
 {#if data.folder?.parent}
@@ -100,6 +107,7 @@
                             name="id"
                             value={f.id}
                             disabled={loading[i]}
+                            on:click={confirm}
                             ><i class="bi bi-trash"></i></button
                         >
                     {/if}
@@ -156,6 +164,7 @@
                             name="id"
                             value={f.id}
                             disabled={setLoading[i]}
+                            on:click={confirm}
                         >
                             <i class="bi bi-trash"></i>
                         </button>
