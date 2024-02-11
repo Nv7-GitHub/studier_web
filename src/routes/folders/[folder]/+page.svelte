@@ -135,6 +135,13 @@
                     <a class="btn btn-primary" href={"/study/" + f.id}>
                         <i class="bi bi-play-fill"></i>
                     </a>
+                    <a
+                        class="btn btn-warning"
+                        href={"/download/" + f.id}
+                        download={f.title + ".txt"}
+                    >
+                        <i class="bi bi-download"></i>
+                    </a>
                     <button
                         class="btn btn-success"
                         on:click|preventDefault={(e) => {

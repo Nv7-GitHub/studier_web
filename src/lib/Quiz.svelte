@@ -5,6 +5,12 @@
     export let question: RecordModel;
     let oldid = "";
     export let next: (correct: boolean) => Promise<void>;
+    async function transitionNext(correct: boolean) {
+        opacity = 0;
+        await next(correct);
+        opacity = 100;
+    }
+    let opacity = 100;
 
     let inp: HTMLInputElement;
     let inpval: string;
@@ -53,7 +59,7 @@
     function submit() {
         if (wrong) {
             if (question.kind == "multiple") {
-                next(false);
+                transitionNext(false);
                 return;
             }
 
@@ -61,7 +67,7 @@
                 if (question.kind == "single") {
                     wrong = false;
                     right = true;
-                    next(true);
+                    transitionNext(true);
                 } else {
                     // Blanks
                     let ans =
@@ -75,14 +81,14 @@
                         question.answer.blanks.length
                     ) {
                         right = true;
-                        next(true);
+                        transitionNext(true);
                         return;
                     }
                     wrong = false;
                 }
                 return;
             } else {
-                next(false);
+                transitionNext(false);
                 return;
             }
         }
@@ -90,7 +96,7 @@
         if (question.kind == "single") {
             if (compare(inpval, question.answer.value)) {
                 right = true;
-                next(true);
+                transitionNext(true);
                 return;
             } else {
                 wrong = true;
@@ -124,7 +130,7 @@
 
                 if (answered.length == question.answer.values.length) {
                     right = true;
-                    next(true);
+                    transitionNext(true);
                     return;
                 }
 
@@ -147,7 +153,7 @@
                     question.answer.blanks.length
                 ) {
                     right = true;
-                    next(true);
+                    transitionNext(true);
                     return;
                 }
                 return;
@@ -161,7 +167,10 @@
     }
 </script>
 
-<div class="text-center">
+<div
+    class="text-center"
+    style="opacity: {opacity}%; transition-duration: 0.2s;"
+>
     <h2 class="lead">
         {#each parts as p}
             {#if p[0] == "`"}
