@@ -11,7 +11,6 @@
     async function search() {
         loading = true;
         let filter = "";
-        console.log(inpval);
         if (inpval != "") {
             filter = `username ~ "${inpval}"`;
         }
