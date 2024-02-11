@@ -24,6 +24,9 @@
         </button>
         <div class="collapse navbar-collapse" id="dropdown">
             <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/search">Search</a>
+                </li>
                 <li class="nav-item dropdown">
                     {#if data.user}
                         <button
