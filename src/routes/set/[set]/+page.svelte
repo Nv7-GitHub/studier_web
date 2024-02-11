@@ -19,7 +19,7 @@
     }
     async function uploadSet() {
         const name = "Chapter 21";
-        const folder = "4lnxyx0qfxt1xwt";
+        const folder = "q1k7aw6rmevaud5";
         let qs: string[] = [];
         let set = await pb.collection("sets").create({
             title: name,
@@ -74,7 +74,13 @@
                 }
             }
         }
-        await pb.collection("sets").update(set.id, { questions: qs });
+        try {
+            await pb.collection("sets").update(set.id, { questions: qs });
+        } catch (e) {
+            console.log("Waiting...");
+            await new Promise((r) => setTimeout(r, 10000));
+            await pb.collection("sets").update(set.id, { questions: qs });
+        }
     }*/
 
     let qs = new Array(data.set?.expand?.questions.length);
