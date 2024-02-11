@@ -192,6 +192,10 @@
                 {p}
             {/if}
         {/each}
+
+        {#if question.kind == "multiple"}
+            <code> ({question.answer.values.length} answers)</code>
+        {/if}
     </h2>
 
     <div class="input-group">

@@ -24,8 +24,8 @@
         }, 1000);
     }
 
-    function confirm(e: Event) {
-        if (window.confirm("Are you sure you want to delete this?")) {
+    function confirm(e: Event, text: string) {
+        if (window.confirm(`Are you sure you want to delete "${text}"?`)) {
             return;
         }
         e.preventDefault();
@@ -107,8 +107,9 @@
                             name="id"
                             value={f.id}
                             disabled={loading[i]}
-                            on:click={confirm}
-                            ><i class="bi bi-trash"></i></button
+                            on:click={(e) => {
+                                confirm(e, f.name);
+                            }}><i class="bi bi-trash"></i></button
                         >
                     {/if}
                 </div>
@@ -164,7 +165,7 @@
                             name="id"
                             value={f.id}
                             disabled={setLoading[i]}
-                            on:click={confirm}
+                            on:click={(e) => confirm(e, f.title)}
                         >
                             <i class="bi bi-trash"></i>
                         </button>
