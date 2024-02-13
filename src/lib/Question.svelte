@@ -62,7 +62,7 @@
             inputs[1].focus();
         }
 
-        if (e.key == "Tab") {
+        if (e.key == "Tab" && ind == questions.length - 1) {
             e.preventDefault();
             newquestion();
         }
@@ -100,7 +100,11 @@
             }
         }
 
-        if (e.key == "Tab" && parseInt(t.id) == inputs.length - 1) {
+        if (
+            e.key == "Tab" &&
+            parseInt(t.id) == inputs.length - 1 &&
+            ind == questions.length - 1
+        ) {
             e.preventDefault();
             newquestion();
         }
@@ -157,7 +161,8 @@
 
         if (
             e.key == "Tab" &&
-            parseInt(t.id) == questions[ind].answer.blanks.length - 1
+            parseInt(t.id) == questions[ind].answer.blanks.length - 1 &&
+            ind == questions.length - 1
         ) {
             e.preventDefault();
             newquestion();
@@ -165,7 +170,7 @@
     }
 
     async function handleIncludeInput(e: KeyboardEvent) {
-        if (e.key == "Tab") {
+        if (e.key == "Tab" && ind == questions.length - 1) {
             e.preventDefault();
             newquestion();
         }
