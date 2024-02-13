@@ -7,8 +7,6 @@
         return formDat && formDat[field];
     }
 
-    $: console.log(form);
-
     let loading = false;
 </script>
 
