@@ -3,9 +3,11 @@
 
     export let form;
 
-    function hasError(field: string) {
-        return form && form[field];
+    function hasError(formDat: any, field: string) {
+        return formDat && formDat[field];
     }
+
+    $: console.log(form);
 
     let loading = false;
 </script>
@@ -20,6 +22,11 @@
     method="post"
     use:enhance={() => {
         loading = true;
+
+        return async ({ update }) => {
+            loading = false;
+            update();
+        };
     }}
 >
     <div class="mb-3">
@@ -28,10 +35,10 @@
             type="text"
             name="username"
             class="form-control"
-            class:is-invalid={hasError("username")}
+            class:is-invalid={hasError(form, "username")}
             id="username"
         />
-        {#if hasError("username")}
+        {#if hasError(form, "username")}
             <div class="invalid-feedback">{form?.["username"].message}</div>
         {/if}
     </div>
@@ -42,9 +49,9 @@
             name="email"
             class="form-control"
             id="email"
-            class:is-invalid={hasError("email")}
+            class:is-invalid={hasError(form, "email")}
         />
-        {#if hasError("email")}
+        {#if hasError(form, "email")}
             <div class="invalid-feedback">{form?.["email"].message}</div>
         {/if}
     </div>
@@ -55,9 +62,9 @@
             name="password"
             class="form-control"
             id="password"
-            class:is-invalid={hasError("password")}
+            class:is-invalid={hasError(form, "password")}
         />
-        {#if hasError("password")}
+        {#if hasError(form, "password")}
             <div class="invalid-feedback">{form?.["password"].message}</div>
         {/if}
     </div>

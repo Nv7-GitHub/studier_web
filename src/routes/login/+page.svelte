@@ -16,6 +16,12 @@
     method="post"
     use:enhance={() => {
         loading = true;
+
+        return async ({ update }) => {
+            loading = false;
+            form = form;
+            update();
+        };
     }}
 >
     <div class="mb-3">

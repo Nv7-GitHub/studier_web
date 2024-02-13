@@ -8,27 +8,29 @@ export const actions = {
         const password = data.get('password') as string;
 
         // Register
+        let usrid: string;
         try {
-            await locals.pb?.collection("users").create({
+            const usr = await locals.pb?.collection("users").create({
                 "username": username,
                 "email": email,
                 "password": password,
                 "passwordConfirm": password,
             });
+            usrid = usr?.id!;
         } catch (err: any) {
             return fail(400, err.data.data);
         }
 
         // Login
         try {
-            const usr = await locals.pb?.collection("users").authWithPassword(email, password);
+            await locals.pb?.collection("users").authWithPassword(email, password);
             const home = await locals.pb?.collection("folders").create({
                 "parent": null,
                 "name": "Home",
-                "user": usr?.record.id,
+                "user": usrid,
             })
-            await locals.pb?.collection("users").update(usr?.record.id!, {
-                "home": home?.record.id,
+            await locals.pb?.collection("users").update(usrid, {
+                "home": home?.id,
             });
         } catch (err) {
             console.log('Login error', err);
