@@ -47,30 +47,37 @@
 
 <h1>{title}</h1>
 
-<form
-    method="POST"
-    class="input-group mb-3"
-    use:enhance={() => {
-        createFolderLoading = true;
+{#if owner}
+    <form
+        method="POST"
+        class="input-group mb-3"
+        use:enhance={() => {
+            createFolderLoading = true;
 
-        return async ({ update }) => {
-            createFolderLoading = false;
-            update();
-        };
-    }}
->
-    <input type="text" class="form-control" placeholder="Name" name="name" />
-    <button
-        class="btn btn-outline-secondary"
-        formaction="?/newfolder"
-        disabled={createFolderLoading}>Create Folder</button
+            return async ({ update }) => {
+                createFolderLoading = false;
+                update();
+            };
+        }}
     >
-    <button
-        class="btn btn-outline-primary"
-        formaction="?/newset"
-        disabled={createFolderLoading}>Create Set</button
-    >
-</form>
+        <input
+            type="text"
+            class="form-control"
+            placeholder="Name"
+            name="name"
+        />
+        <button
+            class="btn btn-outline-secondary"
+            formaction="?/newfolder"
+            disabled={createFolderLoading}>Create Folder</button
+        >
+        <button
+            class="btn btn-outline-primary"
+            formaction="?/newset"
+            disabled={createFolderLoading}>Create Set</button
+        >
+    </form>
+{/if}
 
 <div class="list-group">
     {#each data.subfolders as f, i}
