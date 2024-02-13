@@ -15,7 +15,7 @@
 
     async function edit() {
         try {
-            questions[ind] = await pb.collection("questions").update(
+            let res = await pb.collection("questions").update(
                 questions[ind].id,
                 {
                     question: questions[ind].question,
@@ -27,6 +27,9 @@
                     expand: "include,include.author",
                 },
             );
+            if (res.include) {
+                questions[ind].expand = res.expand;
+            }
         } catch (e) {
             console.log("autocancel");
         }
