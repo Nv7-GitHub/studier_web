@@ -84,7 +84,9 @@
     }*/
 
     let qs = new Array(data.set?.expand?.questions.length);
+    let makingnew = false;
     async function newquestion() {
+        makingnew = true;
         const q = await pb.collection("questions").create({
             set: data.set?.id,
             question: "",
@@ -104,6 +106,7 @@
             qs.pop(); // Why does null and undefined keep getting added to the end???
         }
         qs[qs.length - 1].focus();
+        makingnew = false;
     }
 
     async function rmquestion(ind: number) {
@@ -134,7 +137,19 @@
         .name}</a
 >
 
-<h1 class="mt-3">{data.set?.title}</h1>
+<div class="d-flex">
+    <div>
+        <h1 class="mt-3 justify-content-start">{data.set?.title}</h1>
+        <h4 class="text-body-secondary">
+            {data.set?.expand?.questions.length} Questions
+        </h4>
+    </div>
+    <div class="ms-auto d-flex flex-column justify-content-center">
+        <a class="btn btn-lg btn-primary" href={"/study/" + data.set?.id}
+            >Study</a
+        >
+    </div>
+</div>
 
 {#each data.set?.expand?.questions as _, i}
     <Question
@@ -147,3 +162,13 @@
         bind:focus={qs[i]}
     />
 {/each}
+
+{#if owner}
+    <div class="text-center mt-3">
+        <button
+            on:click={newquestion}
+            class="btn btn-primary"
+            disabled={makingnew}>New Question</button
+        >
+    </div>
+{/if}

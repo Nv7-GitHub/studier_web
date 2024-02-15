@@ -7,10 +7,14 @@
 
     let createFolderLoading = false;
 
-    let title = data.folder?.name;
-    let owner = data.folder?.user == data.user?.id;
-    if (!owner) {
-        title = data.folder?.expand?.user.username + "'s Sets";
+    let title: string;
+    $: title = data.folder?.name;
+    let owner: boolean;
+    $: {
+        owner = data.folder?.user == data.user?.id;
+        if (!owner && !data.folder?.parent) {
+            title = data.folder?.expand?.user.username + "'s Sets";
+        }
     }
 
     async function copy(e: Event, text: string) {
