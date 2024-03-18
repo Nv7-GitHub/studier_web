@@ -5,7 +5,11 @@
     let loading = new Array(data.progress.length).fill(false);
 
     function confirm(e: Event, text: string) {
-        if (window.confirm(`Are you sure you want to delete "${text}"?`)) {
+        if (
+            window.confirm(
+                `Are you sure you want to reset your progress in "${text}"?`,
+            )
+        ) {
             return;
         }
         e.preventDefault();

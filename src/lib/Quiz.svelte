@@ -10,6 +10,7 @@
     async function transitionNext(correct: boolean) {
         opacity = 0;
         await next(correct);
+        nextQ();
         opacity = 100;
     }
     let opacity = 100;
@@ -24,17 +25,20 @@
     let wrongval: string;
     let answered: string[] = [];
     let blanksanswered: Record<string, string> = {};
+    function nextQ() {
+        oldid = question.id;
+        parts = question.question.split(/(`.+?`)/g);
+        wrong = false;
+        right = false;
+        answered = [];
+        blanksanswered = {};
+        if (inp) {
+            inpval = "";
+        }
+    }
     $: {
         if (oldid != question.id) {
-            oldid = question.id;
-            parts = question.question.split(/(`.+?`)/g);
-            wrong = false;
-            right = false;
-            answered = [];
-            blanksanswered = {};
-            if (inp) {
-                inpval = "";
-            }
+            nextQ();
         }
     }
 
