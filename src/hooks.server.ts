@@ -30,6 +30,12 @@ export const handle: Handle = async ({ event, resolve }) => {
             throw redirect(303, '/');
         }
     }
+    if (event.url.pathname.startsWith('/progress')) {
+        if (!event.locals.user) {
+            // Redirect to the home page if the user isn't logged in
+            throw redirect(303, '/');
+        }
+    }
 
     // Resolve the request
     const response = await resolve(event);

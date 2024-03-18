@@ -44,6 +44,11 @@
                                 >
                             </li>
                             <li>
+                                <a class="dropdown-item" href="/progress"
+                                    >In Progress</a
+                                >
+                            </li>
+                            <li>
                                 <hr class="dropdown-divider" />
                             </li>
                             <li>
