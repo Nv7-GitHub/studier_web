@@ -126,6 +126,19 @@
     }
 
     let owner = data.set?.author == data.user?.id;
+
+    let edittitle = false;
+    let editinput: HTMLInputElement;
+    let titleval = data.set?.title;
+    async function savetitle() {
+        if (titleval != data.set?.title) {
+            await pb
+                .collection("sets")
+                .update(data.set!.id, { title: titleval });
+        }
+        data.set!.title = titleval;
+        edittitle = false;
+    }
 </script>
 
 <svelte:head>
@@ -139,7 +152,27 @@
 
 <div class="d-flex">
     <div>
-        <h1 class="mt-3 justify-content-start">{data.set?.title}</h1>
+        <h1
+            class="mt-3 justify-content-start"
+            on:click={async () => {
+                edittitle = true;
+                await tick();
+                editinput.focus();
+            }}
+        >
+            {#if edittitle}
+                <input
+                    type="text"
+                    bind:value={titleval}
+                    on:blur={savetitle}
+                    bind:this={editinput}
+                    class="form-control h1"
+                    style="font-size: 1.375rem;"
+                />
+            {:else}
+                {data.set?.title}
+            {/if}
+        </h1>
         <h4 class="text-body-secondary">
             {data.set?.expand?.questions.length} Questions
         </h4>
