@@ -304,7 +304,10 @@
                     </div>
                 </div>
             {:else}
-                TODO: Instructions on how to copy the ID
+                Don't know how to include sets? Check out <a
+                    target="_blank"
+                    href="/help/include">the help page</a
+                >.
             {/if}
         {/if}
     </div>
