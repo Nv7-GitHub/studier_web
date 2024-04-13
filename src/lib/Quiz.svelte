@@ -8,6 +8,11 @@
     let oldid = "";
     export let next: (correct: boolean) => Promise<void>;
     async function transitionNext(correct: boolean) {
+        // Sound effect
+        let audio = new Audio(`/audio/${correct ? "correct" : "wrong"}.mp3`);
+        audio.volume = 0.5;
+        audio.play();
+
         opacity = 0;
         await next(correct);
         nextQ();
