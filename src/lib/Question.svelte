@@ -175,6 +175,31 @@
             newquestion();
         }
     }
+
+    async function handleClipboardPaste(e: ClipboardEvent) {
+        // Get it from clipboard
+        const formData = new FormData();
+        let hasImage = false;
+        for (let f of e.clipboardData!.files) {
+            if (f.type == "image/png" || f.type == "image/jpeg") {
+                hasImage = true;
+                formData.append("image", f);
+                break;
+            }
+        }
+        if (!hasImage) {
+            return;
+        }
+
+        // Upload
+        fileInput.disabled = true;
+        const q = await pb
+            .collection("questions")
+            .update(questions[ind].id, formData);
+        fileInput.disabled = false;
+        fileInput.value = "";
+        questions[ind].image = q.image;
+    }
 </script>
 
 <div class="card mt-3">
@@ -204,6 +229,7 @@
                 on:change={edit}
                 bind:this={focus}
                 on:keydown={handleTitleInput}
+                on:paste={handleClipboardPaste}
                 on:keyup={blanksCheck}
                 placeholder="Question"
                 disabled={!owner}
