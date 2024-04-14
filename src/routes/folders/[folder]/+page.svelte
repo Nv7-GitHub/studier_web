@@ -3,6 +3,7 @@
 
     export let data;
     let loading = new Array(data.subfolders.length).fill(false);
+    let renameLoading = new Array(data.subfolders.length).fill(false);
     let setLoading = new Array(data.sets.length).fill(false);
 
     let createFolderLoading = false;
@@ -33,6 +34,15 @@
             return;
         }
         e.preventDefault();
+    }
+
+    async function renameFolder(e: Event, oldTitle: string, id: string) {
+        let res = window.prompt(`What do you want to rename "${oldTitle}" to?`);
+        if (!res) {
+            e.preventDefault();
+            return;
+        }
+        (document.getElementById(id) as HTMLButtonElement).value = res;
     }
 </script>
 
@@ -90,14 +100,15 @@
                 ><i class="bi bi-folder"></i>
                 {f.name}</a
             >
+
             <form
                 method="POST"
-                action="?/delfolder"
                 use:enhance={() => {
                     loading[i] = true;
 
                     return async ({ update }) => {
                         loading[i] = false;
+                        renameLoading[i] = false;
                         update();
                     };
                 }}
@@ -113,11 +124,24 @@
                         <i class="bi bi-clipboard"></i>
                     </button>
                     {#if owner}
+                        <input type="hidden" name="id" value={f.id} />
+                        <button
+                            class="btn btn-primary"
+                            name="name"
+                            formaction="?/renamefolder"
+                            id={f.id}
+                            type="submit"
+                            disabled={renameLoading[i] && loading[i]}
+                            on:click={(e) => {
+                                renameFolder(e, f.name, f.id);
+                                renameLoading[i] = true;
+                            }}><i class="bi bi-pencil-square"></i></button
+                        >
                         <button
                             class="btn btn-danger"
-                            name="id"
-                            value={f.id}
-                            disabled={loading[i]}
+                            type="submit"
+                            formaction="?/delfolder"
+                            disabled={loading[i] && !renameLoading[i]}
                             on:click={(e) => {
                                 confirm(e, f.name);
                             }}><i class="bi bi-trash"></i></button

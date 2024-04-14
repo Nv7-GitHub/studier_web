@@ -61,5 +61,12 @@ export const actions = {
         const id = data.get('id') as string;
         await locals.pb?.collection("sets").delete(id);
         return { success: true };
-    }
+    },
+    renamefolder: async ({ locals, params, request, route }) => {
+        const data = await request.formData();
+        const name = data.get("name") as string;
+        const id = data.get("id") as string;
+        await locals.pb?.collection("folders").update(id, { name })
+        return { success: true };
+    },
 }
