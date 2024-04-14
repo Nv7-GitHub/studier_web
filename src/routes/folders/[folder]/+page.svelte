@@ -1,6 +1,6 @@
 <script lang="ts">
     import { enhance } from "$app/forms";
-    import { onMount } from "svelte";
+    import { afterUpdate } from "svelte";
 
     export let data;
     let loading = new Array(data.subfolders.length).fill(false);
@@ -22,7 +22,7 @@
         }
     }
 
-    onMount(() => {
+    function updatetooltips() {
         const tooltipTriggerList = document.querySelectorAll(
             '[data-bs-toggle="tooltip"]',
         );
@@ -30,7 +30,8 @@
             (tooltipTriggerEl) =>
                 new globalThis.bootstrap.Tooltip(tooltipTriggerEl),
         );
-    });
+    }
+    afterUpdate(updatetooltips);
 
     async function copy(e: Event, text: string) {
         let btn = e.currentTarget as HTMLButtonElement;
