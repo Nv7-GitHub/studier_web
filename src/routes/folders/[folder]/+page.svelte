@@ -1,5 +1,6 @@
 <script lang="ts">
     import { enhance } from "$app/forms";
+    import { onMount } from "svelte";
 
     export let data;
     let loading = new Array(data.subfolders.length).fill(false);
@@ -20,6 +21,16 @@
             title = data.folder?.expand?.user.username + "'s Sets";
         }
     }
+
+    onMount(() => {
+        const tooltipTriggerList = document.querySelectorAll(
+            '[data-bs-toggle="tooltip"]',
+        );
+        [...tooltipTriggerList].map(
+            (tooltipTriggerEl) =>
+                new globalThis.bootstrap.Tooltip(tooltipTriggerEl),
+        );
+    });
 
     async function copy(e: Event, text: string) {
         let btn = e.currentTarget as HTMLButtonElement;
@@ -140,6 +151,8 @@
                 <div class="btn-group float-end">
                     <button
                         class="btn btn-success"
+                        data-bs-toggle="tooltip"
+                        data-bs-title="Copy ID"
                         on:click|preventDefault={(e) => {
                             copy(e, f.id);
                         }}
@@ -155,6 +168,8 @@
                             id={"rename" + f.id}
                             type="submit"
                             disabled={renameLoading[i] && loading[i]}
+                            data-bs-toggle="tooltip"
+                            data-bs-title="Rename folder"
                             on:click={(e) => {
                                 renameFolder(e, f.name, f.id);
                                 renameLoading[i] = true;
@@ -167,6 +182,8 @@
                             id={"move" + f.id}
                             type="submit"
                             disabled={moveLoading[i] && loading[i]}
+                            data-bs-toggle="tooltip"
+                            data-bs-title="Move folder"
                             on:click={(e) => {
                                 moveFolder(e, f.name, f.id);
                                 moveLoading[i] = true;
@@ -179,6 +196,8 @@
                             disabled={loading[i] &&
                                 !renameLoading[i] &&
                                 !moveLoading[i]}
+                            data-bs-toggle="tooltip"
+                            data-bs-title="Delete folder"
                             on:click={(e) => {
                                 confirm(e, f.name);
                             }}><i class="bi bi-trash"></i></button
@@ -213,18 +232,27 @@
                 style="display: inline;"
             >
                 <div class="btn-group float-end">
-                    <a class="btn btn-primary" href={"/study/" + f.id}>
+                    <a
+                        class="btn btn-primary"
+                        href={"/study/" + f.id}
+                        data-bs-toggle="tooltip"
+                        data-bs-title="Study set"
+                    >
                         <i class="bi bi-play-fill"></i>
                     </a>
                     <a
                         class="btn btn-warning"
                         href={"/download/" + f.id}
                         download={f.title + ".txt"}
+                        data-bs-toggle="tooltip"
+                        data-bs-title="Download set"
                     >
                         <i class="bi bi-download"></i>
                     </a>
                     <button
                         class="btn btn-success"
+                        data-bs-toggle="tooltip"
+                        data-bs-title="Copy ID"
                         on:click|preventDefault={(e) => {
                             copy(e, f.id);
                         }}
@@ -240,6 +268,8 @@
                             id={"moveSet" + f.id}
                             type="submit"
                             disabled={setMoveLoading[i] && setLoading[i]}
+                            data-bs-toggle="tooltip"
+                            data-bs-title="Move set"
                             on:click={(e) => {
                                 moveSet(e, f.title, f.id);
                                 setMoveLoading[i] = true;
@@ -248,6 +278,8 @@
                         <button
                             class="btn btn-danger"
                             disabled={setLoading[i] && !moveLoading[i]}
+                            data-bs-toggle="tooltip"
+                            data-bs-title="Delete set"
                             on:click={(e) => confirm(e, f.title)}
                         >
                             <i class="bi bi-trash"></i>
