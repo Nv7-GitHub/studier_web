@@ -4,7 +4,10 @@
     export let data;
     let loading = new Array(data.subfolders.length).fill(false);
     let renameLoading = new Array(data.subfolders.length).fill(false);
+    let moveLoading = new Array(data.subfolders.length).fill(false);
+
     let setLoading = new Array(data.sets.length).fill(false);
+    let setMoveLoading = new Array(data.sets.length).fill(false);
 
     let createFolderLoading = false;
 
@@ -42,7 +45,27 @@
             e.preventDefault();
             return;
         }
-        (document.getElementById(id) as HTMLButtonElement).value = res;
+        (document.getElementById("rename" + id) as HTMLButtonElement).value =
+            res;
+    }
+
+    async function moveFolder(e: Event, title: string, id: string) {
+        let res = window.prompt(`Where do you want to move "${title}" to?`);
+        if (!res) {
+            e.preventDefault();
+            return;
+        }
+        (document.getElementById("move" + id) as HTMLButtonElement).value = res;
+    }
+
+    async function moveSet(e: Event, title: string, id: string) {
+        let res = window.prompt(`Where do you want to move "${title}" to?`);
+        if (!res) {
+            e.preventDefault();
+            return;
+        }
+        (document.getElementById("moveSet" + id) as HTMLButtonElement).value =
+            res;
     }
 </script>
 
@@ -129,7 +152,7 @@
                             class="btn btn-primary"
                             name="name"
                             formaction="?/renamefolder"
-                            id={f.id}
+                            id={"rename" + f.id}
                             type="submit"
                             disabled={renameLoading[i] && loading[i]}
                             on:click={(e) => {
@@ -138,10 +161,24 @@
                             }}><i class="bi bi-pencil-square"></i></button
                         >
                         <button
+                            class="btn btn-warning"
+                            name="target"
+                            formaction="?/movefolder"
+                            id={"move" + f.id}
+                            type="submit"
+                            disabled={moveLoading[i] && loading[i]}
+                            on:click={(e) => {
+                                moveFolder(e, f.name, f.id);
+                                moveLoading[i] = true;
+                            }}><i class="bi bi-folder-symlink"></i></button
+                        >
+                        <button
                             class="btn btn-danger"
                             type="submit"
                             formaction="?/delfolder"
-                            disabled={loading[i] && !renameLoading[i]}
+                            disabled={loading[i] &&
+                                !renameLoading[i] &&
+                                !moveLoading[i]}
                             on:click={(e) => {
                                 confirm(e, f.name);
                             }}><i class="bi bi-trash"></i></button
@@ -195,11 +232,22 @@
                         <i class="bi bi-clipboard"></i>
                     </button>
                     {#if owner}
+                        <input type="hidden" name="id" value={f.id} />
+                        <button
+                            class="btn btn-info"
+                            name="target"
+                            formaction="?/moveset"
+                            id={"moveSet" + f.id}
+                            type="submit"
+                            disabled={setMoveLoading[i] && setLoading[i]}
+                            on:click={(e) => {
+                                moveSet(e, f.title, f.id);
+                                setMoveLoading[i] = true;
+                            }}><i class="bi bi-file-arrow-up"></i></button
+                        >
                         <button
                             class="btn btn-danger"
-                            name="id"
-                            value={f.id}
-                            disabled={setLoading[i]}
+                            disabled={setLoading[i] && !moveLoading[i]}
                             on:click={(e) => confirm(e, f.title)}
                         >
                             <i class="bi bi-trash"></i>

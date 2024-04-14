@@ -69,4 +69,18 @@ export const actions = {
         await locals.pb?.collection("folders").update(id, { name })
         return { success: true };
     },
+    movefolder: async ({ locals, params, request, route }) => {
+        const data = await request.formData();
+        const target = data.get("target") as string;
+        const id = data.get("id") as string;
+        await locals.pb?.collection("folders").update(id, { parent: target })
+        return { success: true };
+    },
+    moveset: async ({ locals, params, request, route }) => {
+        const data = await request.formData();
+        const target = data.get("target") as string;
+        const id = data.get("id") as string;
+        await locals.pb?.collection("sets").update(id, { folder: target })
+        return { success: true };
+    },
 }
