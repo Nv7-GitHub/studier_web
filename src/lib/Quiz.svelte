@@ -67,6 +67,15 @@
         return a.trim().toLowerCase() == b.trim().toLowerCase();
     }
 
+    function hasAnsweredList(ans: string) {
+        for (let a of answered) {
+            if (compare(a, ans)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     function submit() {
         if (wrong) {
             if (question.kind == "multiple") {
@@ -122,15 +131,9 @@
             for (let ans of question.answer.values) {
                 if (compare(inpval, ans)) {
                     // Check if already answered
-                    let already = false;
-                    for (let a of answered) {
-                        if (compare(a, ans)) {
-                            already = true;
-                            break;
-                        }
-                    }
-                    if (!already) {
+                    if (!hasAnsweredList(ans)) {
                         correct = true;
+                        inpval = ans;
                         break;
                     }
                 }
@@ -256,9 +259,20 @@
             <h3>Correct Answers</h3>
             <ul class="list-group">
                 {#each question.answer.values as a}
-                    <li class="list-group-item">{a}</li>
+                    {#if !hasAnsweredList(a)}
+                        <li class="list-group-item">{a}</li>
+                    {/if}
                 {/each}
             </ul>
+
+            {#if answered.length > 0}
+                <h3 class="mt-3">Previous Answers</h3>
+                <ul class="list-group">
+                    {#each answered as a}
+                        <li class="list-group-item">{a}</li>
+                    {/each}
+                </ul>
+            {/if}
         {:else if question.kind == "blanks"}
             <h3>Your Answer</h3>
             {wrongval}
