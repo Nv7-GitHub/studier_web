@@ -38,10 +38,28 @@
             await addQuestion(data.set?.expand?.questions[i]);
         }
 
-        // Calculate starting index & progress
+        // Calculate starting index
+        if (data.progress) {
+            ind = data.progress.ind;
+        } else {
+            checkLocalstorage();
+            ind = parseInt(
+                window.localStorage.getItem(
+                    "progress-" + data.set?.id + "-ind",
+                )!,
+            );
+        }
+        if (ind >= questions.length) {
+            ind = 0;
+        }
         while (progressHas(questions[ind].id)) {
             ind++;
+            if (ind >= questions.length) {
+                ind = 0;
+            }
         }
+
+        // Calculate starting progress
         totalValue = questions.reduce((acc, q) => acc + questionValue(q), 0);
         if (data.progress) {
             for (let v of data.progress.finished) {
@@ -61,17 +79,26 @@
                 }
             }
         }
+        recalcUnfinishedProgress();
 
         loading = false;
+    }
+
+    function checkLocalstorage() {
+        if (!window.localStorage.getItem("progress-" + data.set?.id)) {
+            window.localStorage.setItem("progress-" + data.set?.id, "[]");
+            window.localStorage.setItem(
+                "progress-" + data.set?.id + "-ind",
+                "0",
+            );
+        }
     }
 
     function progressHas(question: string) {
         if (data.progress) {
             return data.progress.finished.includes(question);
         }
-        if (!window.localStorage.getItem("progress-" + data.set?.id)) {
-            window.localStorage.setItem("progress-" + data.set?.id, "[]");
-        }
+        checkLocalstorage();
         return JSON.parse(
             window.localStorage.getItem("progress-" + data.set?.id)!,
         ).includes(question);
@@ -89,14 +116,26 @@
         return 0;
     }
 
+    let unfinishedProgress = 0;
+    function recalcUnfinishedProgress() {
+        let doneCnt = 0;
+        let notDoneCnt = 0;
+        for (let [qInd, q] of questions.entries()) {
+            if (!progressHas(q.id)) {
+                if (qInd < ind) {
+                    doneCnt++;
+                }
+            }
+        }
+        unfinishedProgress = doneCnt / questions.length;
+    }
+
     // Interactivity
     async function next(correct: boolean) {
+        // Update progress
         if (correct) {
             if (data.progress) {
                 data.progress.finished.push(questions[ind].id);
-                await pb.collection("progress").update(data.progress!.id, {
-                    finished: data.progress.finished,
-                });
             } else {
                 let p = JSON.parse(
                     window.localStorage.getItem("progress-" + data.set?.id)!,
@@ -125,16 +164,33 @@
         }
 
         // Next question
-        ind++;
-        if (ind >= questions.length) {
-            ind = 0;
+        let newInd = ind + 1;
+        if (newInd >= questions.length) {
+            newInd = 0;
         }
-        while (progressHas(questions[ind].id)) {
-            ind++;
-            if (ind >= questions.length) {
-                ind = 0;
+        while (progressHas(questions[newInd].id)) {
+            newInd++;
+            if (newInd >= questions.length) {
+                newInd = 0;
             }
         }
+
+        // Update ind
+        if (data.progress) {
+            data.progress.ind = newInd;
+            await pb.collection("progress").update(data.progress!.id, {
+                finished: data.progress.finished,
+                ind: data.progress.ind,
+            });
+        } else {
+            window.localStorage.setItem(
+                "progress-" + data.set?.id + "-ind",
+                newInd.toString(),
+            );
+        }
+
+        ind = newInd;
+        recalcUnfinishedProgress();
     }
 </script>
 
@@ -153,12 +209,19 @@
         </div>
     </div>
 {:else}
-    <div class="progress mb-4">
+    <div class="progress-stacked mb-4">
         <div
             class="progress-bar progress-bar-striped progress-bar-animated"
             style="width: {(progress / totalValue) * 100}%;"
         >
             {Math.round((progress / totalValue) * 100)}%
+        </div>
+
+        <div
+            class="progress-bar progress-bar-striped progress-bar-animated bg-warning"
+            style="width: {unfinishedProgress * 100}%;"
+        >
+            {Math.round(unfinishedProgress * 100)}%
         </div>
     </div>
 
