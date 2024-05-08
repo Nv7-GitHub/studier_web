@@ -119,15 +119,14 @@
     let unfinishedProgress = 0;
     function recalcUnfinishedProgress() {
         let doneCnt = 0;
-        let notDoneCnt = 0;
         for (let [qInd, q] of questions.entries()) {
             if (!progressHas(q.id)) {
                 if (qInd < ind) {
-                    doneCnt++;
+                    doneCnt += questionValue(q);
                 }
             }
         }
-        unfinishedProgress = doneCnt / questions.length;
+        unfinishedProgress = doneCnt / totalValue;
     }
 
     // Interactivity
