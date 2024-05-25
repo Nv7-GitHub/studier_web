@@ -1,1 +1,1 @@
-export const POCKETBASE_URL = "https://studier.pockethost.io/";
+export const POCKETBASE_URL = "https://st.nv7haven.com";
