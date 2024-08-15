@@ -24,8 +24,25 @@
         </button>
         <div class="collapse navbar-collapse" id="dropdown">
             <ul class="navbar-nav ms-auto">
-                <li class="nav-item">
-                    <a class="nav-link" href="/search">Search</a>
+                <li class="nav-item dropdown">
+                    <button
+                        class="nav-link dropdown-toggle"
+                        data-bs-toggle="dropdown"
+                        aria-expanded="false"
+                    >
+                        Search
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li>
+                            <a class="dropdown-item" href="/search/users"
+                                >Users</a
+                            >
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="/search/sets">Sets</a
+                            >
+                        </li>
+                    </ul>
                 </li>
                 <li class="nav-item dropdown">
                     {#if data.user}

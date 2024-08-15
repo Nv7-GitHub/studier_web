@@ -12,18 +12,22 @@
         loading = true;
         let filter = "";
         if (inpval != "") {
-            filter = `username ~ "${inpval}"`;
+            filter = `title ~ "${inpval}"`;
         }
         res = await pb
-            .collection("users")
-            .getList(0, 50, { filter, sort: "created" });
+            .collection("sets")
+            .getList(0, 50, { filter, sort: "-updated" });
         loading = false;
     }
 
     onMount(search);
 </script>
 
-<h1>Find Users</h1>
+<svelte:head>
+    <title>Search Sets - Studier</title>
+</svelte:head>
+
+<h1>Search Sets</h1>
 <form class="input-group">
     <input
         type="text"
@@ -44,11 +48,10 @@
 
 {#if res}
     <ul class="list-group mt-3">
-        {#each res.items as user}
+        {#each res.items as set}
             <a
-                href={`/folders/${user.home}`}
-                class="list-group-item list-group-item-action"
-                >{user.username}</a
+                href={`/set/${set.id}`}
+                class="list-group-item list-group-item-action">{set.title}</a
             >
         {/each}
     </ul>
