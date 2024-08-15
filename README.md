@@ -1,5 +1,7 @@
 # Studier
-Studier allows you to take and study notes in an efficient, successful manner. Ace your tests with Studier!
+Studier allows you to take and study notes in an efficient, successful manner. Ace your tests with Studier! 
+
+Learn more about how I've effectively used Studier on my tests [in my blog post](https://medium.com/@vikramaditya.nishant/how-i-got-five-5s-on-my-aps-with-studier-and-you-can-too-d385a175c746)!
 
 1. Make an account
 2. Make a study set (top-right -> My sets)
