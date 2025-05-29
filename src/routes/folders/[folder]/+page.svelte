@@ -22,6 +22,8 @@
         }
     }
 
+    let setName = "";
+
     let tooltips: any[] = [];
     beforeUpdate(() => {
         tooltips.map((t) => t.dispose());
@@ -120,16 +122,19 @@
             class="form-control"
             placeholder="Name"
             name="name"
+            bind:value={setName}
         />
         <button
             class="btn btn-outline-secondary"
             formaction="?/newfolder"
-            disabled={createFolderLoading}>Create Folder</button
+            disabled={createFolderLoading || setName.length < 1}
+            >Create Folder</button
         >
         <button
             class="btn btn-outline-primary"
             formaction="?/newset"
-            disabled={createFolderLoading}>Create Set</button
+            disabled={createFolderLoading || setName.length < 1}
+            >Create Set</button
         >
     </form>
 {/if}
